@@ -18,7 +18,7 @@ const ANCHO = 128;
 const ALTO = 64;
 const AMBAR = '#ffb000';
 const NEGRO = '#000000';
-const ESCALA_FUENTE = 2.5; // Aumentar tamaño de fuente para mejor visualización
+const ESCALA_FUENTE = 2.5; // Ajusta este valor para cambiar el tamaño de las letras
 
 /**
  * Dibuja la pantalla OLED completa basada en el estado actual
@@ -115,13 +115,12 @@ function dibujarLineas(ctx, lineas, tamano, alineacion, startY, colorFrente) {
 
 /**
  * Dibuja un texto en posición (x, y) con tamaño y color
- * Simula el comportamiento de Adafruit GFX con escala mejorada
+ * Simula el comportamiento de Adafruit GFX con escala configurable
  */
 function dibujarTexto(ctx, texto, tamano, x, y, color) {
   const metrics = fontMetrics[tamano];
   
-  // Establecer fuente monoespaciada con escala aumentada para mejor visualización
-  // ESCALA_FUENTE = 1.5 para que las letras ocupen más espacio visible
+  // Establecer fuente monoespaciada usando ESCALA_FUENTE
   const fontSize = metrics.height * ESCALA_FUENTE;
   ctx.font = `bold ${fontSize}px 'Courier New', 'JetBrains Mono', monospace`;
   ctx.fillStyle = color;
