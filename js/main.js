@@ -118,7 +118,8 @@ async function procesarYMostrarImagen() {
     marcarEstado('Procesando imagen…', null, elementos);
     
     const umbral = parseInt(elementos.umbral.value);
-    const resultado = await procesarImagen(file, 128, 64, umbral);
+    const dithering = elementos.dithering.checked;
+    const resultado = await procesarImagen(file, 128, 64, umbral, dithering);
 
     estadoActual.imagenData = resultado.imagenData;
     estadoActual.imagenAncho = resultado.imagenAncho;
@@ -187,6 +188,13 @@ function configurarEventos() {
   // Umbral de binarización
   elementos.umbral.addEventListener('input', (e) => {
     elementos.valorUmbral.textContent = e.target.value;
+    if (elementos.cargadorImagen.files.length > 0) {
+      procesarYMostrarImagen();
+    }
+  });
+
+  // Dithering (Floyd-Steinberg) vs umbral simple
+  elementos.dithering.addEventListener('change', () => {
     if (elementos.cargadorImagen.files.length > 0) {
       procesarYMostrarImagen();
     }
