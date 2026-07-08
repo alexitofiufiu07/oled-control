@@ -18,7 +18,7 @@ import {
 
 const ANCHO = 128;
 const ALTO = 64;
-const AMBAR = '#ffb000';
+const AMBAR = '#4dd2ff';
 const NEGRO = '#000000';
 
 /**
