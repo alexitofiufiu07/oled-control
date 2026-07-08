@@ -130,6 +130,15 @@
         <p class="descripcion-campo">Formatos: JPG, PNG, GIF, WebP. Se redimensionará a 128×64 sin distorsión, con marcos negros si es necesario.</p>
       </div>
 
+      <div class="campo switch-fila">
+        <span class="rotulo" style="margin:0;">Difuminado (dithering)</span>
+        <label class="switch">
+          <input type="checkbox" id="dithering" checked />
+          <span class="via"><span class="perilla"></span></span>
+        </label>
+      </div>
+      <p class="descripcion-campo">Activado: mejor para fotos y degradados (simula tonos medios con trama de puntos). Desactivado: umbral duro, mejor para logos e íconos ya de alto contraste.</p>
+
       <div class="campo">
         <label class="rotulo" for="umbral">Umbral de binarización</label>
         <div class="control-rango">
@@ -159,4 +168,3 @@
 <script type="module" src="js/main.js"></script>
 </body>
 </html>
-
