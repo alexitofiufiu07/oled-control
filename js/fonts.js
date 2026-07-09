@@ -134,25 +134,98 @@ export function calcularAltoTexto(lineas, tamano) {
   return AVANCE_Y * tamano * lineas.length;
 }
 
-/** Divide un texto en líneas por palabra, igual que el word-wrap del firmware. */
-export function dividirEnLineas(texto, tamano, anchoMax = 128) {
-  const palabras = texto.length ? texto.split(' ') : [''];
-  const lineas = [];
+/**
+ * Corta una palabra que no entra sola en el ancho disponible,
+ * caracter por caracter, en tantos pedazos como haga falta.
+ * Espejo de dividirPalabraLarga() en pantalla.cpp, usando
+ * calcularAnchoTexto() en vez de display.getTextBounds().
+ */
+function dividirPalabraLarga(palabra, tamano, anchoMax) {
+  const partes = [];
   let actual = '';
 
-  for (const palabra of palabras) {
-    const candidata = actual.length ? actual + ' ' + palabra : palabra;
+  for (const ch of palabra) {
+    const candidata = actual + ch;
     const ancho = calcularAnchoTexto(candidata, tamano);
 
     if (ancho <= anchoMax || actual.length === 0) {
       actual = candidata;
     } else {
-      lineas.push(actual);
-      actual = palabra;
+      partes.push(actual);
+      actual = ch;
     }
   }
 
-  if (actual.length > 0) lineas.push(actual);
+  if (actual.length > 0) partes.push(actual);
+  return partes;
+}
+
+/**
+ * Aplica el word-wrap sobre un solo párrafo (sin '\n' adentro).
+ * Espejo de dividirParrafoEnLineas() en pantalla.cpp.
+ */
+function dividirParrafoEnLineas(parrafo, tamano, anchoMax) {
+  if (parrafo.length === 0) {
+    // Línea en blanco explícita (el usuario dejó un renglón vacío).
+    return [''];
+  }
+
+  const lineas = [];
+  let lineaActual = '';
+
+  // Misma extracción de palabras que el firmware: parte por espacios
+  // simples, uno a uno (equivalente a texto.split(' ')).
+  const palabras = parrafo.split(' ');
+
+  for (const palabra of palabras) {
+    const anchoPalabra = calcularAnchoTexto(palabra, tamano);
+
+    if (anchoPalabra > anchoMax) {
+      // La palabra no entra sola en una línea: se corta.
+      if (lineaActual.length > 0) {
+        lineas.push(lineaActual);
+        lineaActual = '';
+      }
+
+      const partes = dividirPalabraLarga(palabra, tamano, anchoMax);
+
+      for (let i = 0; i < partes.length - 1; i++) lineas.push(partes[i]);
+
+      // El último pedazo de la palabra queda abierto, por si todavía
+      // entra algo más de la siguiente palabra al lado.
+      lineaActual = partes.length ? partes[partes.length - 1] : '';
+      continue;
+    }
+
+    const candidata = lineaActual.length === 0 ? palabra : lineaActual + ' ' + palabra;
+    const anchoCandidata = calcularAnchoTexto(candidata, tamano);
+
+    if (anchoCandidata <= anchoMax || lineaActual.length === 0) {
+      lineaActual = candidata;
+    } else {
+      lineas.push(lineaActual);
+      lineaActual = palabra;
+    }
+  }
+
+  if (lineaActual.length > 0) lineas.push(lineaActual);
+  return lineas;
+}
+
+/**
+ * Divide un texto en líneas, igual que dividirEnLineas() en pantalla.cpp:
+ * primero separa por saltos de línea explícitos ('\n', los que deja el
+ * Enter en el textarea), y dentro de cada párrafo aplica word-wrap,
+ * cortando caracter por caracter las palabras que no entran solas.
+ */
+export function dividirEnLineas(texto, tamano, anchoMax = 128) {
+  const parrafos = texto.split('\n');
+  let lineas = [];
+
+  for (const parrafo of parrafos) {
+    lineas = lineas.concat(dividirParrafoEnLineas(parrafo, tamano, anchoMax));
+  }
+
   if (lineas.length === 0) lineas.push('');
   return lineas;
 }
