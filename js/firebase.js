@@ -40,6 +40,7 @@ export async function cargarEstado() {
         texto: (typeof pantalla.texto === 'string') ? pantalla.texto : 'Hola Mundo',
         tamano: Number(config.tamano) || 2,
         alineacion: config.alineacion || 'centro',
+        alineacionV: config.alineacionV || 'centro',
         invertido: !!config.invertido,
         modoTexto: config.modoTexto || 'ajustar',
         imagenData: imagen.datos || '',
@@ -55,6 +56,7 @@ export async function cargarEstado() {
         texto: 'Hola Mundo',
         tamano: 2,
         alineacion: 'centro',
+        alineacionV: 'centro',
         invertido: false,
         modoTexto: 'ajustar',
         imagenData: '',
@@ -90,6 +92,7 @@ export async function enviarEstado(estado) {
         config: {
           tamano: estado.tamano,
           alineacion: estado.alineacion,
+          alineacionV: estado.alineacionV,
           invertido: estado.invertido,
           modoTexto: estado.modoTexto
         },
